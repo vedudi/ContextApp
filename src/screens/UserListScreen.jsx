@@ -2,8 +2,10 @@ import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useContext} from 'react';
 import {UserContext} from '../context/UserContext';
 import Loader from '../components/Loader';
+import {useNavigation} from '@react-navigation/native';
 
 const UserListScreen = () => {
+  const navigation = useNavigation();
   const {loading, error, users} = useContext(UserContext);
 
   return (
@@ -17,7 +19,10 @@ const UserListScreen = () => {
           data={users}
           keyExtractor={item => item.id.toString()}
           renderItem={({item}) => (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('UserDetails', {userId: item.id})
+              }>
               <View style={styles.item}>
                 <Text style={styles.title}> {item.name} </Text>
                 <Text style={styles.subtitle}> {item.email} </Text>
