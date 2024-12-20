@@ -3,37 +3,67 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {TaskContext} from '../context/TaskContext';
 import Loader from '../components/Loader';
+import Error from '../components/Error';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const TaskScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const {userId} = route.params;
-  const {tasks, loading, error} = useContext(TaskContext);
+  const {
+    tasks,
+    loading,
+    error,
+    removeTask,
+    addTask,
+    newTaskTitle,
+    setNewTaskTitle,
+  } = useContext(TaskContext);
+  const handleTask = () => {
+    addTask(newTaskTitle);
+    setNewTaskTitle('');
+  };
   return (
     <View style={{flex: 1}}>
       {loading ? (
         <Loader />
       ) : error ? (
-        <Text> {error} </Text>
+        <Error />
       ) : (
-        <FlatList
-          data={tasks}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <View style={styles.item}>
-              <Text style={styles.title}> {item.title} </Text>
-              <Text style={styles.subtitle}> {item.email} </Text>
-              <Button title="Remove" />
-            </View>
-          )}
-        />
+        <>
+          <FlatList
+            data={tasks}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({item}) => (
+              <View style={styles.item}>
+                <Text style={styles.title}>
+                  {' '}
+                  {item.title.length > 20
+                    ? item.title.slice(0, 30) + '...'
+                    : item.title}{' '}
+                </Text>
+                <Button title="Remove" onPress={() => removeTask(item.id)} />
+              </View>
+            )}
+          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              value={newTaskTitle}
+              placeholder="New Task Title"
+              style={styles.input}
+              onChangeText={setNewTaskTitle}
+            />
+            <Button title="Add Task" onPress={handleTask} />
+          </View>
+        </>
       )}
     </View>
   );

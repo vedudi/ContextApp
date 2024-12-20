@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import React, {createContext, useEffect, useState} from 'react';
 import axios from 'axios';
 
@@ -21,9 +21,23 @@ const TaskProvider = ({children}) => {
         setLoading(false);
       });
   }, []);
-
+  const removeTask = id => {
+    const filtred = tasks.filter(task => task.id !== id);
+    setTasks(filtred);
+    Alert.alert("Task silindi")
+  };
+  const addTask=title=>{
+const newTask={
+  userId:1,
+  id:tasks.length+1,
+  title,
+}
+setTasks([...tasks,newTask])
+Alert.alert("Yeni Task Eklendi")
+  }
   return (
-    <TaskContext.Provider value={{tasks, loading, newTaskTitle, error}}>
+    <TaskContext.Provider
+      value={{tasks, loading, error, removeTask, addTask,newTaskTitle,setNewTaskTitle}}>
       {children}
     </TaskContext.Provider>
   );
